@@ -615,6 +615,7 @@ size_t				size_required;
 
 	table->updated  	= time(NULL);
 	// IPFIX only has 64bit counters
+	table->flags		= 0;
 	SetFlag(table->flags, FLAG_PKG_64);
 	SetFlag(table->flags, FLAG_BYTES_64);
 	table->ICMP_offset	= 0;
