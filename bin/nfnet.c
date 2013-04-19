@@ -71,7 +71,7 @@ static int joinGroup(int sockfd, int loopBack, int mcastTTL, struct sockaddr_sto
 int Unicast_receive_socket(const char *bindhost, const char *listenport, int family, int sockbuflen ) {
 struct addrinfo hints, *res, *ressave;
 socklen_t   	optlen;
-int 			error, p, sockfd;
+int 			error, p, sockfd, one = 1;
 
 
 	if ( !listenport ) {
@@ -120,6 +120,9 @@ int 			error, p, sockfd;
 
         if ( !( sockfd < 0 ) ) {
 			// socket call was successfull
+
+            // allow other applications to bind to the same port
+            setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
             if (bind(sockfd, res->ai_addr, res->ai_addrlen) == 0) {
 				if ( res->ai_family == AF_INET ) 
