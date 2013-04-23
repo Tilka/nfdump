@@ -424,7 +424,7 @@ struct order_mode_s {
 };
 #define Default_PrintOrder 1		// order_mode[0].val
 static uint32_t	print_order_bits = 0;
-static uint32_t	PrintOrder 		 = 0;
+static int		PrintOrder		 = -1;
 static uint32_t	NumStats 		 = 0;
 
 static uint64_t	byte_limit, packet_limit;
@@ -711,7 +711,7 @@ int		 hash_num;
 		StatTable[hash_num].NextElem  = 0;
 
 		if ( StatRequest[hash_num].order_bits == 0 ) {
-			StatRequest[hash_num].order_bits = PrintOrder ? order_mode[PrintOrder].val : Default_PrintOrder;
+			StatRequest[hash_num].order_bits = PrintOrder > -1 ? order_mode[PrintOrder].val : Default_PrintOrder;
 		}
 	}
 
@@ -749,7 +749,7 @@ uint16_t	order_proto = 0;
 	if ( ParseStatString(str, &StatType, &flow_record_stat, &order_proto) ) {
 		if ( flow_record_stat ) {
 			if ( !print_order_bits ) 
-				print_order_bits = PrintOrder ? order_mode[PrintOrder].val : Default_PrintOrder;
+				print_order_bits = PrintOrder > -1 ? order_mode[PrintOrder].val : Default_PrintOrder;
 			*flow_stat = 1;
 		} else {
 			StatRequest[NumStats].StatType 	  = StatType;
@@ -872,8 +872,7 @@ int Parse_PrintOrder(char *order) {
 		PrintOrder++;
 	}
 	if ( !order_mode[PrintOrder].string ) {
-		PrintOrder = 0;
-		return -1;
+		PrintOrder = -1;
 	}
 
 	return PrintOrder;
@@ -1319,7 +1318,7 @@ char				*string;
 	aggr_record_mask = GetMasterAggregateMask();
 	c = 0;
 	maxindex = FlowTable->NumRecords;
-	if ( PrintOrder ) {
+	if ( PrintOrder > -1 ) {
 		// Sort according the date
 		SortList = (SortElement_t *)calloc(maxindex, sizeof(SortElement_t));
 
